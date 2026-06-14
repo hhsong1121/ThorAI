@@ -4,6 +4,8 @@ Clinical decision support for lobectomy recovery: rule-based chest tube recommen
 
 This repository ships **demo mode only**. Training scripts, fine-tuned weights, vector databases, and copyrighted guideline PDFs are **not** included.
 
+5 open-source dataset were used (ChestX-ray8, Chexpert, MIMIC-CXR-JPG, Padchest and VinDr-CXR). No data was exposed to the third-party cloud API, and all data was permanently deleted after fine-tuning.
+
 ## Architecture
 
 ```mermaid
