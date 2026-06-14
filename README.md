@@ -1,4 +1,4 @@
-# ThorAI[Thoracic Post-Operative CDSS](Portfolio Demo)
+# ThorAI [Thoracic Post-Operative CDSS](Portfolio Demo)
 
 Clinical decision support for lobectomy recovery: rule-based chest tube recommendations, NIH Chest X-ray Grad-CAM analysis, paraphrased guideline snippets, and a template clinical briefing.
 
