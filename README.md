@@ -47,7 +47,6 @@ Health check: http://127.0.0.1:8000/api/v1/health
 | `backend_api/` | FastAPI server, rule engine, CXR AI, demo fallbacks |
 | `run_demo.sh` | Starts the backend with demo mode enabled |
 | `run_frontend.sh` | Starts the Streamlit UI |
-| `scripts/prepare_public_push.sh` | Creates a clean export for a new public GitHub repo |
 
 ## Disclaimer
 
