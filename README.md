@@ -1,31 +1,27 @@
-# Thoracic Post-Operative CDSS
+# ThorAI[Thoracic Post-Operative CDSS](Portfolio Demo)
 
-Clinical decision support for thoracic surgery recovery: rule-based chest tube / diet recommendations, chest X-ray AI (NIH Grad-CAM), optional RAG over guidelines, and optional local SLM briefing.
+Clinical decision support for lobectomy recovery: rule-based chest tube recommendations, NIH Chest X-ray Grad-CAM analysis, paraphrased guideline snippets, and a template clinical briefing.
 
-This repository is prepared for **portfolio use**. Training datasets, fine-tuned weights, and copyrighted guideline PDFs are **not** included. Use **Demo Mode** to run the full UI without those assets.
+This repository ships **demo mode only**. Training scripts, fine-tuned weights, vector databases, and copyrighted guideline PDFs are **not** included.
 
 ## Architecture
 
 ```mermaid
 flowchart LR
     FE[Streamlit Frontend] --> API[FastAPI server.py]
-    API --> Rules[logic_lobectomy / logic_esophagectomy]
+    API --> Rules[logic_lobectomy.py]
     API --> CXR[ai_engine.py NIH Grad-CAM]
-    API --> RAG[Qdrant RAG or demo snippets]
-    API --> SLM[MLX LoRA or template insight]
+    API --> Demo[demo_assets.py snippets and template briefing]
 ```
 
-## Demo vs full local mode
+| Component | Demo behavior |
+|-----------|---------------|
+| Rule engine | Live lobectomy chest-tube logic |
+| NIH CXR + Grad-CAM | Live (public pretrained weights via torchxrayvision) |
+| Guideline evidence | Paraphrased demo snippets (no PDFs or vector DB) |
+| Agent insight | Template briefing (no local SLM) |
 
-| Component | Demo Mode (`DEMO_MODE=1`) | Full local mode |
-|-----------|---------------------------|-----------------|
-| Rule engines | Real | Real |
-| NIH CXR + Grad-CAM | Real (public pretrained) | Real |
-| VinDr object detection | Disabled | Requires local `.pth` |
-| RAG | Paraphrased demo snippets | Qdrant + your PDFs |
-| Agent insight | Template briefing | MLX + LoRA adapters |
-
-## Quick start (portfolio demo)
+## Quick start
 
 ```bash
 python3 -m venv .venv
@@ -33,57 +29,35 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 # Terminal 1
-chmod +x run_demo.sh run_frontend.sh
 ./run_demo.sh
 
 # Terminal 2
 ./run_frontend.sh
 ```
 
-Open the Streamlit URL (usually http://localhost:8501). Click **데모 샘플 CXR 불러오기** or upload any chest X-ray, then **Run Full Analysis**.
+Open the Streamlit URL (usually http://localhost:8501). Click **Load Demo Sample CXR** or upload any chest X-ray, then **Run Full Analysis**.
 
 Health check: http://127.0.0.1:8000/api/v1/health
-
-## Full local mode (your machine only)
-
-1. Set `DEMO_MODE=0` in `.env` (see `.env.example`).
-2. Place VinDr weights at `backend_api/weights/vindr_det_epoch_10.pth`.
-3. Place MLX LoRA adapters in `backend_api/adapters/`.
-4. Build Qdrant DB: `cd research_and_training && python rebuild_db.py` (requires PDFs in `data/`).
-5. Install optional dependencies commented in `requirements.txt`.
-6. Run `./run_backend.sh` instead of `./run_demo.sh`.
 
 ## Project layout
 
 | Path | Role |
 |------|------|
-| `frontend/` | Streamlit UI + demo sample CXR |
-| `backend_api/` | FastAPI server, rule engines, CXR AI |
-| `research_and_training/` | Training / RAG build scripts (reference) |
-| `run_demo.sh` | Backend with `DEMO_MODE=1` |
-| `run_backend.sh` | Backend for full local mode |
-
-## Training pipeline
-
-See [research_and_training/DATA.md](research_and_training/DATA.md) for expected folder layouts and dataset links. No raw data ships with this repo.
-
-## Data and license notice
-
-- **VinDr-CXR**: PhysioNet — access agreement required; annotations and images are not redistributed here.
-- **NIH ChestX-ray14**: public research dataset; obtain separately for training scripts.
-- **CheXmask**: obtain under its license for segmentation experiments.
-- **Guideline PDFs**: copyrighted; not included. Demo mode uses original paraphrased snippets only.
-
-## Publishing to GitHub
-
-Do **not** make an existing private repo public if adapter weights were ever committed. Use a **fresh repository** without sensitive history:
-
-```bash
-./scripts/prepare_public_push.sh
-```
-
-Follow the printed steps to create a new public repo and push.
+| `frontend/` | Streamlit UI and synthetic demo CXR |
+| `backend_api/` | FastAPI server, rule engine, CXR AI, demo fallbacks |
+| `run_demo.sh` | Starts the backend with demo mode enabled |
+| `run_frontend.sh` | Starts the Streamlit UI |
+| `scripts/prepare_public_push.sh` | Creates a clean export for a new public GitHub repo |
 
 ## Disclaimer
 
-For research and portfolio demonstration only. Not for clinical use without proper validation and regulatory review.
+This repository is provided for **research and portfolio demonstration only**. It is **not** intended for clinical diagnosis, treatment, or decision-making without independent validation and appropriate regulatory review.
+
+The bundled demo chest X-ray (`frontend/demo_assets/sample_cxr.png`) is a **synthetic image** for UI demonstration. Do not replace it with identifiable clinical images or licensed dataset samples in public repositories.
+
+## References
+
+- Wang, X., et al. (2017). ChestX-ray8. CVPR.
+- TorchXRayVision: public pretrained chest X-ray models used for Grad-CAM in demo mode.
+- Gaggion, N., Mosquera, C., Mansilla, L. et al. CheXmask: a large-scale dataset of anatomical segmentation masks for multi-center chest x-ray images. Sci Data 11, 511 (2024). https://doi.org/10.1038/s41597-024-03358-1
+- Duc Nguyen, DungNB, Ha Q. Nguyen, Julia Elliott, NguyenThanhNhan, and Phil Culliton. VinBigData Chest X-ray Abnormalities Detection. https://kaggle.com/competitions/vinbigdata-chest-xray-abnormalities-detection, 2020. Kaggle.
